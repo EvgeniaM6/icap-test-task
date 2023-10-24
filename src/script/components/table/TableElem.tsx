@@ -1,17 +1,30 @@
 import { useEffect, useState } from 'react';
 import { tryDeleteTableItem, tryGetTable } from '../../utils';
-import { ErrorResponse, TableResponse, ErrDeleteMessageObj } from '../../models';
+import { ErrorResponse, TableResponse, ErrDeleteMessageObj, TableItemFields } from '../../models';
 import { RESPONSE_STATUS } from '../../constants';
 import { TableData } from '../../models/response.model';
-import { Button, Table, message } from 'antd';
+import { Button, Form, Table, message } from 'antd';
 import { getColumns } from './tableColumns';
 import { NewItemForm } from './NewItemForm';
+import { EditableCell } from './EditableCell';
+import dayjs from 'dayjs';
 
 export const TableElem = () => {
   const [tableData, setTableData] = useState<TableData[]>([]);
   const [tableItemsCount, setTableItemsCount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAddTableData, setIsAddTableData] = useState<boolean>(false);
+  const [editingKey, setEditingKey] = useState('');
+
+  const [form] = Form.useForm();
+
+  const isEditing = (record: TableItemFields) => record.key === editingKey;
+
+  const editField = (record: Partial<TableItemFields> & { key: React.Key }) => {
+    const birthday = dayjs(record.birthday_date || '', 'DD-MM-YY');
+    form.setFieldsValue({ ...record, birthday_date: birthday });
+    setEditingKey(record.key);
+  };
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -85,21 +98,39 @@ export const TableElem = () => {
     reloadTable();
   };
 
-  const columns = getColumns(handleDelete);
+  const handleCancel = () => {
+    setEditingKey('');
+  };
+
+  const handleSave = (record: Partial<TableItemFields> & { key: React.Key }) => {
+    console.log('record=', record);
+  };
+
+  const columns = getColumns(isEditing, handleDelete, handleCancel, handleSave, editField);
 
   return (
     <>
       <div>{tableItemsCount}</div>
       <div>TableElem</div>
       {contextHolder}
-      <Table
-        dataSource={tableData.map((tableItem) => {
-          return { key: tableItem.id, ...tableItem };
-        })}
-        columns={columns}
-        loading={isLoading}
-        pagination={false}
-      />
+      <Form form={form}>
+        <Table
+          components={{
+            body: {
+              cell: EditableCell,
+            },
+          }}
+          dataSource={tableData.map((tableItem: TableData) => {
+            return {
+              key: tableItem.id.toString(),
+              ...tableItem,
+            };
+          })}
+          columns={columns}
+          loading={isLoading}
+          pagination={false}
+        />
+      </Form>
       <Button onClick={handleAddData} type="primary">
         Add data
       </Button>

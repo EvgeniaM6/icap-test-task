@@ -68,3 +68,23 @@ export const tryDeleteTableItem = async (id: number): Promise<Response | ErrorRe
     };
   }
 };
+
+export const tryChangeTableItem = async (
+  id: number,
+  values: NewTableData
+): Promise<Response | ErrorResponse> => {
+  try {
+    return await fetch(`${BASE_URL}/${PARTIAL_URL.TABLE}/${id}/`, {
+      method: REQUEST_METHODS.PUT,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(values),
+    });
+  } catch (error: unknown) {
+    return {
+      status: RESPONSE_STATUS.ServerError,
+      error,
+    };
+  }
+};
