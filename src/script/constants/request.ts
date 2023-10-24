@@ -14,6 +14,7 @@ export enum REQUEST_METHODS {
 export enum RESPONSE_STATUS {
   Ok = 200,
   Created = 201,
+  Deleted = 204,
   ServerError = 500,
 }
 

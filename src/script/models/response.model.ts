@@ -25,3 +25,7 @@ export type NewTableData = {
 export type ErrMessagesObj = {
   [key: string]: string[];
 };
+
+export type ErrDeleteMessageObj = {
+  detail: string;
+};

@@ -52,3 +52,19 @@ export const tryAddDataToTable = async (
     };
   }
 };
+
+export const tryDeleteTableItem = async (id: number): Promise<Response | ErrorResponse> => {
+  try {
+    return await fetch(`${BASE_URL}/${PARTIAL_URL.TABLE}/${id}/`, {
+      method: REQUEST_METHODS.DELETE,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  } catch (error: unknown) {
+    return {
+      status: RESPONSE_STATUS.ServerError,
+      error,
+    };
+  }
+};

@@ -13,5 +13,5 @@ type BirthdayObj = {
 };
 
 export type NewItemFormProps = {
-  setIsLoadingTable: React.Dispatch<React.SetStateAction<boolean>>;
+  reloadTable: () => void;
 };

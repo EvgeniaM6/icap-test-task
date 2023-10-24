@@ -14,7 +14,7 @@ import { RESPONSE_STATUS, TIMER_LOGIN } from '../../constants';
 const { Item } = Form;
 
 export const NewItemForm = (props: NewItemFormProps) => {
-  const { setIsLoadingTable } = props;
+  const { reloadTable } = props;
 
   const [isWrongLoginData, setIsWrongLoginData] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -31,13 +31,6 @@ export const NewItemForm = (props: NewItemFormProps) => {
 
       return prevErrMessArr.concat(currentErrMessArr);
     }, []);
-  };
-
-  const reloadTable = (): void => {
-    setIsLoadingTable(true);
-    setTimeout(() => {
-      setIsLoadingTable(false);
-    }, 0);
   };
 
   const handleConfirm = async (values: NewTableItemFields): Promise<void> => {

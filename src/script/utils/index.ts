@@ -1,4 +1,4 @@
 import { getNewTableData } from './getNewTableData';
-import { tryAddDataToTable, tryGetTable, tryLogin } from './request';
+import { tryAddDataToTable, tryDeleteTableItem, tryGetTable, tryLogin } from './request';
 
-export { tryLogin, tryGetTable, tryAddDataToTable, getNewTableData };
+export { tryLogin, tryGetTable, tryAddDataToTable, getNewTableData, tryDeleteTableItem };

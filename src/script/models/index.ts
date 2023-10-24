@@ -1,5 +1,11 @@
 import { LoginFormValues } from './loginForm.model';
-import { ErrMessagesObj, ErrorResponse, NewTableData, TableResponse } from './response.model';
+import {
+  ErrDeleteMessageObj,
+  ErrMessagesObj,
+  ErrorResponse,
+  NewTableData,
+  TableResponse,
+} from './response.model';
 import { NewItemFormProps, NewTableItemFields } from './tableForm.model';
 
 export {
@@ -10,4 +16,5 @@ export {
   NewTableItemFields,
   ErrMessagesObj,
   NewItemFormProps,
+  ErrDeleteMessageObj,
 };
