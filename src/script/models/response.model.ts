@@ -1,3 +1,5 @@
+import { Dayjs } from 'dayjs';
+
 export type ErrorResponse = {
   status: number;
   error: unknown;
@@ -24,6 +26,10 @@ export type NewTableData = {
 
 export interface TableItemFields extends TableData {
   key: string;
+}
+
+export interface TableItemsForm extends Omit<TableItemFields, 'birthday_date'> {
+  birthday_date: Dayjs;
 }
 
 export type ErrMessagesObj = {

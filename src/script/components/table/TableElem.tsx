@@ -1,19 +1,26 @@
 import { useEffect, useState } from 'react';
 import {
-  getErrMessagesArr,
+  getArgsProps,
   getNewTableData,
   tryChangeTableItem,
   tryDeleteTableItem,
   tryGetTable,
 } from '../../utils';
-import { ErrorResponse, TableResponse, ErrDeleteMessageObj, TableItemFields } from '../../models';
+import {
+  ErrorResponse,
+  TableResponse,
+  TableItemFields,
+  NewTableData,
+  TableData,
+  TableItemsForm,
+} from '../../models';
 import { RESPONSE_STATUS } from '../../constants';
-import { ErrMessagesObj, TableData } from '../../models/response.model';
 import { Button, Form, Table, message } from 'antd';
 import { getColumns } from './tableColumns';
 import { NewItemForm } from './NewItemForm';
 import { EditableCell } from './EditableCell';
 import dayjs, { Dayjs } from 'dayjs';
+import { ArgsProps } from 'antd/es/message';
 
 export const TableElem = () => {
   const [tableData, setTableData] = useState<TableData[]>([]);
@@ -27,7 +34,7 @@ export const TableElem = () => {
   const isEditing = (record: TableItemFields) => record.key === editingKey;
 
   const editField = (record: Partial<TableItemFields> & { key: React.Key }) => {
-    const birthday = dayjs(record.birthday_date || '', 'DD-MM-YY');
+    const birthday: Dayjs = dayjs(record.birthday_date || '', 'DD-MM-YY');
     form.setFieldsValue({ ...record, birthday_date: birthday });
     setEditingKey(record.key);
   };
@@ -69,37 +76,14 @@ export const TableElem = () => {
   };
 
   const handleAddData = () => {
-    setIsAddTableData((prevValue) => !prevValue);
+    setIsAddTableData((prevValue: boolean) => !prevValue);
   };
 
   const handleDelete = async (id: number) => {
-    const response = await tryDeleteTableItem(id);
-
-    if (response.status !== RESPONSE_STATUS.Deleted) {
-      console.log('not Deleted');
-      let errContent;
-
-      if ((response as ErrorResponse).error) {
-        const err = (response as ErrorResponse).error;
-        errContent = (err as Error).message;
-      } else {
-        const respBody: ErrDeleteMessageObj = await (response as Response).json();
-        console.log('respBody=', respBody);
-
-        errContent = respBody.detail;
-      }
-      messageApi.open({
-        type: 'error',
-        content: errContent,
-      });
-
-      return;
-    }
-
-    messageApi.open({
-      type: 'success',
-      content: 'Item successful deleted',
-    });
+    const response: Response | ErrorResponse = await tryDeleteTableItem(id);
+    const isSuccess: boolean = response.status === RESPONSE_STATUS.Deleted;
+    const msgArgsProps: ArgsProps = await getArgsProps(response, isSuccess, 'deleted');
+    messageApi.open(msgArgsProps);
 
     reloadTable();
   };
@@ -110,44 +94,24 @@ export const TableElem = () => {
 
   const handleSave = async (id: number): Promise<void> => {
     try {
-      const row = (await form.validateFields()) as TableItemFields;
+      const row: TableItemsForm = await form.validateFields();
       const { birthday_date, phone_number, ...restValues } = row;
 
-      const values = getNewTableData({
+      const values: NewTableData = getNewTableData({
         ...restValues,
         birthday: birthday_date as unknown as Dayjs,
         phone: phone_number,
       });
 
       const response: Response | ErrorResponse = await tryChangeTableItem(id, values);
+      const isSuccess: boolean = response.status === RESPONSE_STATUS.Ok;
+      const msgArgsProps: ArgsProps = await getArgsProps(response, isSuccess, 'changed');
+      messageApi.open(msgArgsProps);
 
-      if (response.status !== RESPONSE_STATUS.Ok) {
-        let errContent;
-
-        if ((response as ErrorResponse).error) {
-          const err = (response as ErrorResponse).error;
-          errContent = (err as Error).message;
-        } else {
-          const respBody: ErrMessagesObj = await (response as Response).json();
-          const newErrMessagesArr: string[] = getErrMessagesArr(respBody);
-
-          errContent = newErrMessagesArr.join(' ');
-        }
-        messageApi.open({
-          type: 'error',
-          content: errContent,
-        });
-
-        return;
+      if (isSuccess) {
+        handleCancel();
+        reloadTable();
       }
-
-      messageApi.open({
-        type: 'success',
-        content: 'Item successful changed',
-      });
-
-      handleCancel();
-      reloadTable();
     } catch (error) {
       console.log('error=', error);
     }

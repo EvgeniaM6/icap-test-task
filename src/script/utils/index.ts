@@ -1,4 +1,4 @@
-import { getErrMessagesArr } from './getErrMessagesArr';
+import { getArgsProps, getErrMessage, getErrMessagesArr } from './getErrMessagesArr';
 import { getNewTableData } from './getNewTableData';
 import {
   tryAddDataToTable,
@@ -16,4 +16,6 @@ export {
   tryDeleteTableItem,
   tryChangeTableItem,
   getErrMessagesArr,
+  getErrMessage,
+  getArgsProps,
 };

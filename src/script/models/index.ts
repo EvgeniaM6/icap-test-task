@@ -7,6 +7,7 @@ import {
   TableData,
   TableResponse,
   TableItemFields,
+  TableItemsForm,
 } from './response.model';
 import { NewItemFormProps, NewTableItemFields } from './tableForm.model';
 
@@ -21,4 +22,5 @@ export {
   ErrDeleteMessageObj,
   TableItemFields,
   TableData,
+  TableItemsForm,
 };
