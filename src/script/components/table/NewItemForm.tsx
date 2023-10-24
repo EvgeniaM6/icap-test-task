@@ -1,13 +1,21 @@
 import { Alert, Button, DatePicker, Form, Input } from 'antd';
 import { TextInput } from '../loginForm/TextInput';
 import { useState } from 'react';
-import { ErrMessagesObj, ErrorResponse, NewTableData, NewTableItemFields } from '../../models';
+import {
+  ErrMessagesObj,
+  ErrorResponse,
+  NewItemFormProps,
+  NewTableData,
+  NewTableItemFields,
+} from '../../models';
 import { getNewTableData, tryAddDataToTable } from '../../utils';
 import { RESPONSE_STATUS, TIMER_LOGIN } from '../../constants';
 
 const { Item } = Form;
 
-export const NewItemForm = () => {
+export const NewItemForm = (props: NewItemFormProps) => {
+  const { setIsLoadingTable } = props;
+
   const [isWrongLoginData, setIsWrongLoginData] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errMessagesArr, setErrMessagesArr] = useState<string[]>([]);
@@ -21,8 +29,8 @@ export const NewItemForm = () => {
         return prevArr;
       }, []);
 
-      prevErrMessArr.concat(currentErrMessArr);
-      return prevErrMessArr;
+      const concatedErrMessArr = prevErrMessArr.concat(currentErrMessArr);
+      return concatedErrMessArr;
     }, []);
   };
 
@@ -34,14 +42,14 @@ export const NewItemForm = () => {
 
     setIsLoading(false);
 
-    if (response.status !== RESPONSE_STATUS.Ok) {
+    if (response.status !== RESPONSE_STATUS.Created) {
       if ((response as ErrorResponse).error) {
         const err = (response as ErrorResponse).error;
         setErrMessagesArr([(err as Error).message]);
       } else {
         const respBody: ErrMessagesObj = await (response as Response).json();
 
-        const newErrMessagesArr = getErrMessagesArr(respBody);
+        const newErrMessagesArr: string[] = getErrMessagesArr(respBody);
         setErrMessagesArr(newErrMessagesArr);
       }
 
@@ -51,6 +59,11 @@ export const NewItemForm = () => {
       }, TIMER_LOGIN);
       return;
     }
+
+    setIsLoadingTable(true);
+    setTimeout(() => {
+      setIsLoadingTable(false);
+    }, 0);
   };
 
   return (
@@ -76,9 +89,11 @@ export const NewItemForm = () => {
         </Button>
       </Item>
       {isWrongLoginData &&
-        errMessagesArr.length &&
+        !!errMessagesArr.length &&
         errMessagesArr.map((errMess) => {
-          return <Alert showIcon message={errMess} type="error" closable />;
+          return (
+            <Alert showIcon message={errMess} type="error" closable key={errMess.slice(0, 10)} />
+          );
         })}
     </Form>
   );

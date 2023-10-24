@@ -7,8 +7,6 @@ import { HeaderElement } from './components';
 const { Header, Content } = Layout;
 
 export const App = () => {
-  console.log('App!');
-
   return (
     <>
       <Layout style={{ minHeight: '100vh' }}>

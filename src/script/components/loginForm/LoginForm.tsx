@@ -27,7 +27,6 @@ export const LoginForm = () => {
     const response: Response | ErrorResponse = await tryLogin(values);
     setIsLoading(false);
 
-    console.log('response.status=', response.status);
     if (response.status !== RESPONSE_STATUS.Ok) {
       setIsWrongLoginData(true);
       setTimeout(() => {

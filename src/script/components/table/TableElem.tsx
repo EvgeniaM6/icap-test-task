@@ -55,7 +55,7 @@ export const TableElem = () => {
       <Button onClick={handleAddData} type="primary">
         Add data
       </Button>
-      {isAddTableData && <NewItemForm />}
+      {isAddTableData && <NewItemForm setIsLoadingTable={setIsLoading} />}
     </>
   );
 };

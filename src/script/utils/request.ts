@@ -37,8 +37,6 @@ export const tryGetTable = async (): Promise<Response | ErrorResponse> => {
 export const tryAddDataToTable = async (
   values: NewTableData
 ): Promise<Response | ErrorResponse> => {
-  console.log('values=', values);
-
   try {
     return await fetch(`${BASE_URL}/${PARTIAL_URL.TABLE}/`, {
       method: REQUEST_METHODS.POST,

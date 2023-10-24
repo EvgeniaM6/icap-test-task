@@ -11,3 +11,7 @@ type BirthdayObj = {
   $M: number;
   $y: number;
 };
+
+export type NewItemFormProps = {
+  setIsLoadingTable: React.Dispatch<React.SetStateAction<boolean>>;
+};

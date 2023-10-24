@@ -1,6 +1,6 @@
 import { LoginFormValues } from './loginForm.model';
 import { ErrMessagesObj, ErrorResponse, NewTableData, TableResponse } from './response.model';
-import { NewTableItemFields } from './tableForm.model';
+import { NewItemFormProps, NewTableItemFields } from './tableForm.model';
 
 export {
   LoginFormValues,
@@ -9,4 +9,5 @@ export {
   NewTableData,
   NewTableItemFields,
   ErrMessagesObj,
+  NewItemFormProps,
 };
