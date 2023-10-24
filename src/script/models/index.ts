@@ -1,4 +1,4 @@
 import { LoginFormValues } from './loginForm.model';
-import { ErrorResponse } from './response.model';
+import { ErrorResponse, TableResponse } from './response.model';
 
-export { LoginFormValues, ErrorResponse };
+export { LoginFormValues, ErrorResponse, TableResponse };

@@ -1,3 +1,9 @@
+import { TableElem } from '../components';
+
 export const TablePage = () => {
-  return <div>TablePage</div>;
+  return (
+    <>
+      <TableElem />
+    </>
+  );
 };
