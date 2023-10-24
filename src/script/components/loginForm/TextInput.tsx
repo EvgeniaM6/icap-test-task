@@ -4,13 +4,14 @@ const { Item } = Form;
 
 type TextInputProps = {
   labelName: string;
+  isRequired: boolean;
   children: React.ReactNode;
 };
 
 export const TextInput = (props: TextInputProps) => {
-  const { labelName, children } = props;
+  const { labelName, isRequired, children } = props;
 
-  const messageText = `enter your ${labelName}`;
+  const messageText = `enter ${labelName}`;
 
   return (
     <Item
@@ -18,11 +19,10 @@ export const TextInput = (props: TextInputProps) => {
       name={labelName.toLowerCase()}
       rules={[
         {
-          required: true,
+          required: isRequired,
           message: messageText,
         },
       ]}
-      tooltip={messageText}
     >
       {children}
     </Item>

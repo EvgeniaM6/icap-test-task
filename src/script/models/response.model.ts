@@ -10,11 +10,18 @@ export type TableResponse = {
   results: TableData[];
 };
 
-export type TableData = {
+export interface TableData extends NewTableData {
   id: number;
+}
+
+export type NewTableData = {
   name: string;
   email: string;
   birthday_date: string;
   phone_number: string;
   address?: string;
+};
+
+export type ErrMessagesObj = {
+  [key: string]: string[];
 };

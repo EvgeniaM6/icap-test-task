@@ -39,12 +39,14 @@ export const LoginForm = () => {
     navigate('/table');
   };
 
+  //TODO: add timer for button Login
+
   return (
     <Form form={formElem} onFinish={handleLogin} style={{ maxWidth: 600 }}>
-      <TextInput labelName="Username">
+      <TextInput labelName="Username" isRequired={true}>
         <Input prefix={<UserOutlined />} placeholder="superuser" allowClear />
       </TextInput>
-      <TextInput labelName="Password">
+      <TextInput labelName="Password" isRequired={true}>
         <Input.Password prefix={<LockOutlined />} placeholder="superpassword" allowClear />
       </TextInput>
       <Item>

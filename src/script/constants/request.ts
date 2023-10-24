@@ -1,4 +1,8 @@
 export const BASE_URL = 'https://technical-task-api.icapgroupgmbh.com/api';
+export enum PARTIAL_URL {
+  LOGIN = 'login',
+  TABLE = 'table',
+}
 
 export enum REQUEST_METHODS {
   GET = 'GET',
