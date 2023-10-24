@@ -29,9 +29,15 @@ export const NewItemForm = (props: NewItemFormProps) => {
         return prevArr;
       }, []);
 
-      const concatedErrMessArr = prevErrMessArr.concat(currentErrMessArr);
-      return concatedErrMessArr;
+      return prevErrMessArr.concat(currentErrMessArr);
     }, []);
+  };
+
+  const reloadTable = (): void => {
+    setIsLoadingTable(true);
+    setTimeout(() => {
+      setIsLoadingTable(false);
+    }, 0);
   };
 
   const handleConfirm = async (values: NewTableItemFields): Promise<void> => {
@@ -60,10 +66,7 @@ export const NewItemForm = (props: NewItemFormProps) => {
       return;
     }
 
-    setIsLoadingTable(true);
-    setTimeout(() => {
-      setIsLoadingTable(false);
-    }, 0);
+    reloadTable();
   };
 
   return (

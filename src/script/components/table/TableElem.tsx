@@ -14,6 +14,10 @@ export const TableElem = () => {
   const [isAddTableData, setIsAddTableData] = useState<boolean>(false);
 
   useEffect(() => {
+    if (!isLoading) {
+      return;
+    }
+
     tryGetTable()
       .then((response: Response | ErrorResponse) => {
         if (response.status !== RESPONSE_STATUS.Ok) {
@@ -34,7 +38,7 @@ export const TableElem = () => {
         //TODO: popup with err
         setIsLoading(false);
       });
-  }, []);
+  }, [isLoading]);
 
   const handleAddData = () => {
     setIsAddTableData((prevValue) => !prevValue);
