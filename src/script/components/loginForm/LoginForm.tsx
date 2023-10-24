@@ -1,58 +1,59 @@
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Alert, Button, Form, Input } from 'antd';
 import { useState } from 'react';
+import { NavigateFunction, useNavigate } from 'react-router-dom';
+import { LoginFormValues, ErrorResponse } from '../../models';
+import { tryLogin } from '../../utils';
+import { RESPONSE_STATUS, TIMER_LOGIN } from '../../constants';
+import { TextInput } from './TextInput';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
 
 const { Item } = Form;
 
 export const LoginForm = () => {
-  const [isWrongLoginData, setIsWrongLoginData] = useState(false);
+  const [isWrongLoginData, setIsWrongLoginData] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [formElem] = Form.useForm();
 
-  const handleLogin = (): void => {
-    console.log('handleLogin');
-    setIsWrongLoginData(true);
+  const navigate: NavigateFunction = useNavigate();
+
+  const handleLogin = async (values: LoginFormValues): Promise<void> => {
+    if (isWrongLoginData) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    const response: Response | ErrorResponse = await tryLogin(values);
+    setIsLoading(false);
+
+    console.log('response.status=', response.status);
+    if (response.status !== RESPONSE_STATUS.Ok) {
+      setIsWrongLoginData(true);
+      setTimeout(() => {
+        setIsWrongLoginData(false);
+      }, TIMER_LOGIN);
+      return;
+    }
+
+    navigate('/table');
   };
 
   return (
     <Form form={formElem} onFinish={handleLogin} style={{ maxWidth: 600 }}>
-      <Item
-        label="Username"
-        name="username"
-        rules={[
-          {
-            required: true,
-            message: 'enter your username',
-          },
-        ]}
-        tooltip="enter your username"
-      >
+      <TextInput labelName="Username">
         <Input prefix={<UserOutlined />} placeholder="superuser" allowClear />
-      </Item>
-      <Item
-        label="Password"
-        name="password"
-        rules={[
-          {
-            required: true,
-            message: 'enter your password',
-          },
-        ]}
-      >
+      </TextInput>
+      <TextInput labelName="Password">
         <Input.Password prefix={<LockOutlined />} placeholder="superpassword" allowClear />
-      </Item>
+      </TextInput>
       <Item>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit" disabled={isWrongLoginData} loading={isLoading}>
           Log in
         </Button>
       </Item>
       {isWrongLoginData && (
-        <Alert
-          showIcon
-          message="Username or password is wrong. Try enter again"
-          type="error"
-          closable
-        />
+        <Alert showIcon message="Username or password is wrong. Try again" type="error" closable />
       )}
     </Form>
   );
