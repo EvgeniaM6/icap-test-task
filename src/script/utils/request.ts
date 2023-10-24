@@ -17,3 +17,19 @@ export const tryLogin = async (values: LoginFormValues): Promise<Response | Erro
     };
   }
 };
+
+export const tryGetTable = async (): Promise<Response | ErrorResponse> => {
+  try {
+    return await fetch(`${BASE_URL}/table/`, {
+      method: REQUEST_METHODS.GET,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  } catch (error: unknown) {
+    return {
+      status: RESPONSE_STATUS.ServerError,
+      error,
+    };
+  }
+};

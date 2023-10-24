@@ -1,3 +1,3 @@
-import { tryLogin } from './request';
+import { tryGetTable, tryLogin } from './request';
 
-export { tryLogin };
+export { tryLogin, tryGetTable };
