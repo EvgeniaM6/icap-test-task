@@ -5,8 +5,8 @@ export const getColumns = (
   isEditing: (record: TableItemFields) => boolean,
   handleDelete: (id: number) => void,
   handleCancel: () => void,
-  handleSave: (record: TableItemFields) => void,
-  editField: (record: Partial<TableItemFields> & { key: React.Key }) => void
+  handleSave: (id: number) => void,
+  editField: (record: TableItemFields & { key: React.Key }) => void
 ) => {
   const columns = [
     {
@@ -43,9 +43,10 @@ export const getColumns = (
       title: 'operation',
       dataIndex: 'operation',
       render: (_: unknown, record: TableItemFields) => {
+        const { id } = record;
         return isEditing(record) ? (
           <Space>
-            <Popconfirm title="Sure to save?" onConfirm={() => handleSave(record)}>
+            <Popconfirm title="Sure to save?" onConfirm={() => handleSave(id)}>
               <Button>Save</Button>
             </Popconfirm>
             <Popconfirm title="Sure to cancel?" onConfirm={() => handleCancel()}>
@@ -55,7 +56,7 @@ export const getColumns = (
         ) : (
           <Space>
             <Button onClick={() => editField(record)}>Edit</Button>
-            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(Number(record.key))}>
+            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(id)}>
               <Button>Delete</Button>
             </Popconfirm>
           </Space>

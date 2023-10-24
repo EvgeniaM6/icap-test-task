@@ -4,9 +4,10 @@ import {
   ErrMessagesObj,
   ErrorResponse,
   NewTableData,
+  TableData,
   TableResponse,
+  TableItemFields,
 } from './response.model';
-import { TableItemFields } from './table.model';
 import { NewItemFormProps, NewTableItemFields } from './tableForm.model';
 
 export {
@@ -19,4 +20,5 @@ export {
   NewItemFormProps,
   ErrDeleteMessageObj,
   TableItemFields,
+  TableData,
 };

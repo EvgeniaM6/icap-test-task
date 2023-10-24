@@ -1,4 +1,19 @@
+import { getErrMessagesArr } from './getErrMessagesArr';
 import { getNewTableData } from './getNewTableData';
-import { tryAddDataToTable, tryDeleteTableItem, tryGetTable, tryLogin } from './request';
+import {
+  tryAddDataToTable,
+  tryChangeTableItem,
+  tryDeleteTableItem,
+  tryGetTable,
+  tryLogin,
+} from './request';
 
-export { tryLogin, tryGetTable, tryAddDataToTable, getNewTableData, tryDeleteTableItem };
+export {
+  tryLogin,
+  tryGetTable,
+  tryAddDataToTable,
+  getNewTableData,
+  tryDeleteTableItem,
+  tryChangeTableItem,
+  getErrMessagesArr,
+};

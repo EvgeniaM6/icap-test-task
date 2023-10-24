@@ -8,7 +8,7 @@ import {
   NewTableData,
   NewTableItemFields,
 } from '../../models';
-import { getNewTableData, tryAddDataToTable } from '../../utils';
+import { getErrMessagesArr, getNewTableData, tryAddDataToTable } from '../../utils';
 import { RESPONSE_STATUS, TIMER_LOGIN } from '../../constants';
 
 const { Item } = Form;
@@ -21,17 +21,6 @@ export const NewItemForm = (props: NewItemFormProps) => {
   const [errMessagesArr, setErrMessagesArr] = useState<string[]>([]);
 
   const [formElem] = Form.useForm();
-
-  const getErrMessagesArr = (respBody: ErrMessagesObj): string[] => {
-    return Object.values(respBody).reduce((prevErrMessArr: string[], errMessArr: string[]) => {
-      const currentErrMessArr = errMessArr.reduce((prevArr: string[], errMess: string) => {
-        prevArr.push(errMess);
-        return prevArr;
-      }, []);
-
-      return prevErrMessArr.concat(currentErrMessArr);
-    }, []);
-  };
 
   const handleConfirm = async (values: NewTableItemFields): Promise<void> => {
     const newTableData: NewTableData = getNewTableData(values);

@@ -1,15 +1,11 @@
+import { Dayjs } from 'dayjs';
+
 export type NewTableItemFields = {
   name: string;
   email: string;
-  birthday: BirthdayObj;
+  birthday: Dayjs;
   phone: string;
   address?: string;
-};
-
-type BirthdayObj = {
-  $D: number;
-  $M: number;
-  $y: number;
 };
 
 export type NewItemFormProps = {

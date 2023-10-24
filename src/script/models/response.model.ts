@@ -22,6 +22,10 @@ export type NewTableData = {
   address?: string;
 };
 
+export interface TableItemFields extends TableData {
+  key: string;
+}
+
 export type ErrMessagesObj = {
   [key: string]: string[];
 };

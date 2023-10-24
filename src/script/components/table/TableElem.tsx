@@ -1,13 +1,19 @@
 import { useEffect, useState } from 'react';
-import { tryDeleteTableItem, tryGetTable } from '../../utils';
+import {
+  getErrMessagesArr,
+  getNewTableData,
+  tryChangeTableItem,
+  tryDeleteTableItem,
+  tryGetTable,
+} from '../../utils';
 import { ErrorResponse, TableResponse, ErrDeleteMessageObj, TableItemFields } from '../../models';
 import { RESPONSE_STATUS } from '../../constants';
-import { TableData } from '../../models/response.model';
+import { ErrMessagesObj, TableData } from '../../models/response.model';
 import { Button, Form, Table, message } from 'antd';
 import { getColumns } from './tableColumns';
 import { NewItemForm } from './NewItemForm';
 import { EditableCell } from './EditableCell';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
 export const TableElem = () => {
   const [tableData, setTableData] = useState<TableData[]>([]);
@@ -102,8 +108,49 @@ export const TableElem = () => {
     setEditingKey('');
   };
 
-  const handleSave = (record: Partial<TableItemFields> & { key: React.Key }) => {
-    console.log('record=', record);
+  const handleSave = async (id: number): Promise<void> => {
+    try {
+      const row = (await form.validateFields()) as TableItemFields;
+      const { birthday_date, phone_number, ...restValues } = row;
+
+      const values = getNewTableData({
+        ...restValues,
+        birthday: birthday_date as unknown as Dayjs,
+        phone: phone_number,
+      });
+
+      const response: Response | ErrorResponse = await tryChangeTableItem(id, values);
+
+      if (response.status !== RESPONSE_STATUS.Ok) {
+        let errContent;
+
+        if ((response as ErrorResponse).error) {
+          const err = (response as ErrorResponse).error;
+          errContent = (err as Error).message;
+        } else {
+          const respBody: ErrMessagesObj = await (response as Response).json();
+          const newErrMessagesArr: string[] = getErrMessagesArr(respBody);
+
+          errContent = newErrMessagesArr.join(' ');
+        }
+        messageApi.open({
+          type: 'error',
+          content: errContent,
+        });
+
+        return;
+      }
+
+      messageApi.open({
+        type: 'success',
+        content: 'Item successful changed',
+      });
+
+      handleCancel();
+      reloadTable();
+    } catch (error) {
+      console.log('error=', error);
+    }
   };
 
   const columns = getColumns(isEditing, handleDelete, handleCancel, handleSave, editField);

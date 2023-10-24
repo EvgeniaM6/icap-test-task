@@ -1,12 +1,10 @@
 import { DatePicker, Form, Input } from 'antd';
-import { TableItemFields } from '../../models';
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
   dataIndex: string;
   title: string;
   inputtype: 'date' | 'text';
-  record: TableItemFields;
   index: number;
   children: React.ReactNode;
 }
