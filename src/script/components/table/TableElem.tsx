@@ -23,7 +23,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { ArgsProps } from 'antd/es/message';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { resetEditingKey, setEditingKey } from '../../store/tableSlice';
-import { useGetTableDataQuery } from '../../redux/goodsApi';
+import { useGetTableDataQuery } from '../../redux/tableApi';
 
 export const TableElem = () => {
   const [isAddTableData, setIsAddTableData] = useState<boolean>(false);

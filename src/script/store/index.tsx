@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import tableSlice from './tableSlice';
-import { tableApi } from '../redux/goodsApi';
+import { tableApi } from '../redux/tableApi';
 
 const store = configureStore({
   reducer: {
