@@ -67,7 +67,9 @@ export const tableApi = createApi({
 
 export const {
   useGetTableDataQuery,
+  useGetTableItemQuery,
   useAddDataToTableMutation,
   useDeleteTableItemMutation,
   useChangeTableItemMutation,
+  usePartiallyChangeTableItemMutation,
 } = tableApi;

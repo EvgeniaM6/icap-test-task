@@ -3,9 +3,9 @@ import { TableItemFields } from '../../models';
 
 export const getColumns = (
   isEditing: (record: TableItemFields) => boolean,
-  handleDelete: (id: number) => void,
+  handleDelete: (id: number | undefined) => void,
   handleCancel: () => void,
-  handleSave: (id: number) => void,
+  handleSave: (id: number | undefined) => void,
   editField: (record: TableItemFields & { key: React.Key }) => void
 ) => {
   const columns = [

@@ -29,7 +29,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
           rules={[
             {
               required: isRequired,
-              message: `Please Input ${title}!`,
+              message: `Please enter ${title}!`,
             },
           ]}
         >

@@ -104,7 +104,8 @@ export const TableElem = () => {
     setIsAddTableData((prevValue: boolean) => !prevValue);
   };
 
-  const handleDelete = async (id: number): Promise<void> => {
+  const handleDelete = async (id: number | undefined): Promise<void> => {
+    if (!id) return;
     await deleteTableItem(id);
   };
 
@@ -127,7 +128,9 @@ export const TableElem = () => {
     dispatch(resetEditingKey());
   };
 
-  const handleSave = async (id: number): Promise<void> => {
+  const handleSave = async (id: number | undefined): Promise<void> => {
+    if (!id) return;
+
     try {
       const row: TableItemsForm = await form.validateFields();
       const { birthday_date, phone_number, ...restValues } = row;
