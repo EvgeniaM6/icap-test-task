@@ -59,12 +59,20 @@ export const getArgsProps = (response: unknown, isSuccess: boolean, action: stri
 
 export const getErrMsgFromApi = (error: FetchBaseQueryError | SerializedError): string[] => {
   let errMsg = ['Opps! Something went wrong! Try again'];
+
   if ('message' in error) {
     errMsg = [error.message || ''];
   } else if ('error' in error) {
     errMsg = [error.error];
+  } else if ('detail' in error) {
+    errMsg = [typeof error.detail === 'string' ? error.detail : ''];
   } else if ('data' in error) {
-    errMsg = getErrMessagesArr(error.data as ErrMessagesObj);
+    const errData = error.data as ErrDeleteMessageObj;
+    if ('detail' in errData) {
+      errMsg = [typeof errData.detail === 'string' ? errData.detail : ''];
+    } else {
+      errMsg = getErrMessagesArr(error.data as ErrMessagesObj);
+    }
   }
 
   return errMsg;
