@@ -1,20 +1,12 @@
 import { useEffect, useState } from 'react';
+import { getArgsProps, getErrMessagesArr, getNewTableData } from '../../utils';
 import {
-  getArgsProps,
-  getErrMessagesArr,
-  getNewTableData,
-  tryChangeTableItem,
-  tryDeleteTableItem,
-} from '../../utils';
-import {
-  ErrorResponse,
   TableItemFields,
   NewTableData,
   TableData,
   TableItemsForm,
   ErrValidateForm,
 } from '../../models';
-import { RESPONSE_STATUS } from '../../constants';
 import { Button, Form, Table, message } from 'antd';
 import { getColumns } from './tableColumns';
 import { NewItemForm } from './NewItemForm';
@@ -23,13 +15,38 @@ import dayjs, { Dayjs } from 'dayjs';
 import { ArgsProps } from 'antd/es/message';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { resetEditingKey, setEditingKey } from '../../store/tableSlice';
-import { useGetTableDataQuery } from '../../redux/tableApi';
+import {
+  useChangeTableItemMutation,
+  useDeleteTableItemMutation,
+  useGetTableDataQuery,
+} from '../../redux/tableApi';
 
 export const TableElem = () => {
   const [isAddTableData, setIsAddTableData] = useState<boolean>(false);
 
   const { editingKey } = useAppSelector((state) => state.table);
   const dispatch = useAppDispatch();
+
+  const [
+    deleteTableItem,
+    {
+      isSuccess: isSuccDelete,
+      error: deleteRespErr,
+      data: deleteRespData,
+      status: statDelete,
+      reset: resetDeleteReq,
+    },
+  ] = useDeleteTableItemMutation();
+  const [
+    changeTableItem,
+    {
+      isSuccess: isSuccChange,
+      error: changeRespErr,
+      data: changeRespData,
+      status: statChange,
+      reset: resetChangeReq,
+    },
+  ] = useChangeTableItemMutation();
 
   const [form] = Form.useForm<TableItemsForm>();
 
@@ -79,13 +96,23 @@ export const TableElem = () => {
   };
 
   const handleDelete = async (id: number): Promise<void> => {
-    const response: Response | ErrorResponse = await tryDeleteTableItem(id);
-    const isSuccess: boolean = response.status === RESPONSE_STATUS.Deleted;
-    const msgArgsProps: ArgsProps = await getArgsProps(response, isSuccess, 'deleted');
+    await deleteTableItem(id);
+  };
+
+  useEffect(() => {
+    if (statDelete === 'pending' || statDelete === 'uninitialized') return;
+
+    const msgArgsProps: ArgsProps = getArgsProps(
+      deleteRespErr || deleteRespData,
+      isSuccDelete,
+      'deleted'
+    );
     messageApi.open(msgArgsProps);
 
     reloadTable();
-  };
+
+    resetDeleteReq();
+  }, [isSuccDelete, deleteRespErr, deleteRespData, statDelete]);
 
   const handleCancel = (): void => {
     dispatch(resetEditingKey());
@@ -102,15 +129,7 @@ export const TableElem = () => {
         phone: phone_number,
       });
 
-      const response: Response | ErrorResponse = await tryChangeTableItem(id, values);
-      const isSuccess: boolean = response.status === RESPONSE_STATUS.Ok;
-      const msgArgsProps: ArgsProps = await getArgsProps(response, isSuccess, 'changed');
-      messageApi.open(msgArgsProps);
-
-      if (isSuccess) {
-        handleCancel();
-        reloadTable();
-      }
+      await changeTableItem({ id, ...values });
     } catch (error: unknown) {
       if ((error as ErrValidateForm).errorFields) {
         const errMsgsArr = getErrMessagesArr(error as ErrValidateForm);
@@ -121,6 +140,24 @@ export const TableElem = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (statChange === 'pending' || statChange === 'uninitialized') return;
+
+    const msgArgsProps: ArgsProps = getArgsProps(
+      changeRespErr || changeRespData,
+      isSuccChange,
+      'changed'
+    );
+    messageApi.open(msgArgsProps);
+
+    if (isSuccChange) {
+      handleCancel();
+      reloadTable();
+    }
+
+    resetChangeReq();
+  }, [isSuccChange, changeRespErr, changeRespData, statChange]);
 
   const columns = getColumns(isEditing, handleDelete, handleCancel, handleSave, editField);
 

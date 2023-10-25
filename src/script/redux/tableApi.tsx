@@ -25,7 +25,31 @@ export const tableApi = createApi({
         body: JSON.stringify(values),
       }),
     }),
+    deleteTableItem: build.mutation<Response, number>({
+      query: (id: number) => ({
+        url: `/${PARTIAL_URL.TABLE}/${id}/`,
+        method: REQUEST_METHODS.DELETE,
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+      }),
+    }),
+    changeTableItem: build.mutation<TableData, TableData>({
+      query: ({ id, ...values }: TableData) => ({
+        url: `/${PARTIAL_URL.TABLE}/${id}/`,
+        method: REQUEST_METHODS.PUT,
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+        body: JSON.stringify(values),
+      }),
+    }),
   }),
 });
 
-export const { useGetTableDataQuery, useAddDataToTableMutation } = tableApi;
+export const {
+  useGetTableDataQuery,
+  useAddDataToTableMutation,
+  useDeleteTableItemMutation,
+  useChangeTableItemMutation,
+} = tableApi;

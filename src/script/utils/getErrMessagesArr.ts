@@ -44,14 +44,12 @@ export const getErrMessage = async (response: Response | ErrorResponse): Promise
   return newErrMessagesArr;
 };
 
-export const getArgsProps = async (
-  response: Response | ErrorResponse,
-  isSuccess: boolean,
-  action: string
-): Promise<ArgsProps> => {
+export const getArgsProps = (response: unknown, isSuccess: boolean, action: string): ArgsProps => {
   const messageType = isSuccess ? 'success' : 'error';
   const succMsg = `Item successful ${action}`;
-  const msgContent: string = isSuccess ? succMsg : (await getErrMessage(response)).join(' ');
+  const msgContent: string = isSuccess
+    ? succMsg
+    : getErrMsgFromApi(response as FetchBaseQueryError | SerializedError).join(' ');
 
   return {
     type: messageType,
