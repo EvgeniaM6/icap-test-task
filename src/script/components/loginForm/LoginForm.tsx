@@ -12,6 +12,7 @@ const { Item } = Form;
 export const LoginForm = () => {
   const [isWrongLoginData, setIsWrongLoginData] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [timer, setTimer] = useState<number>(TIMER_LOGIN / 1000);
 
   const [formElem] = Form.useForm();
 
@@ -34,8 +35,14 @@ export const LoginForm = () => {
 
     if (!isSuccess) {
       setIsWrongLoginData(true);
+      const intervalId = setInterval(() => {
+        runTimeout();
+      }, 1000);
+
       setTimeout(() => {
         setIsWrongLoginData(false);
+        clearInterval(intervalId);
+        setTimer(TIMER_LOGIN / 1000);
       }, TIMER_LOGIN);
       return;
     }
@@ -44,7 +51,14 @@ export const LoginForm = () => {
     reset();
   }, [isSuccess, error, data, status]);
 
-  //TODO: add timer for button Login
+  const runTimeout = () => {
+    setTimer((prevTime) => {
+      if (timer > 0) {
+        return prevTime - 1;
+      }
+      return prevTime;
+    });
+  };
 
   return (
     <Form form={formElem} onFinish={handleLogin} style={{ maxWidth: 600 }}>
@@ -58,6 +72,7 @@ export const LoginForm = () => {
         <Button type="primary" htmlType="submit" disabled={isWrongLoginData} loading={isLoading}>
           Log in
         </Button>
+        {isWrongLoginData && <div>{timer}</div>}
       </Item>
       {isWrongLoginData && (
         <Alert showIcon message="Username or password is wrong. Try again" type="error" closable />
