@@ -20,7 +20,7 @@ export const HeaderElement = () => {
     <>
       <Flex style={{ maxHeight: '100%' }} justify="space-between" align="center">
         <h1>Super Table</h1>
-        {keyFromPathName && (
+        {keyFromPathName === 'table' && (
           <Button onClick={logOut} type="primary">
             Log out
           </Button>

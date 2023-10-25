@@ -1,7 +1,7 @@
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Layout } from 'antd';
 import { Footer } from 'antd/es/layout/layout';
-import { LoginPage, TablePage } from './pages';
+import { LoginPage, TablePage, NotFoundPage } from './pages';
 import { HeaderElement } from './components';
 import { useEffect } from 'react';
 import { useAppSelector } from './hooks';
@@ -32,6 +32,7 @@ export const App = () => {
           <Routes>
             <Route path="/" element={<LoginPage />} />
             <Route path="/table" element={<TablePage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Content>
         <Footer className="footer">footer</Footer>
