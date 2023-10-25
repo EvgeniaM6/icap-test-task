@@ -1,14 +1,8 @@
-import { Alert, Button, DatePicker, Form, Input } from 'antd';
+import { Alert, Button, DatePicker, Form, Input, message } from 'antd';
 import { TextInput } from '../loginForm/TextInput';
 import { useState } from 'react';
-import {
-  ErrMessagesObj,
-  ErrorResponse,
-  NewItemFormProps,
-  NewTableData,
-  NewTableItemFields,
-} from '../../models';
-import { getErrMessagesArr, getNewTableData, tryAddDataToTable } from '../../utils';
+import { ErrorResponse, NewItemFormProps, NewTableData, NewTableItemFields } from '../../models';
+import { getErrMessage, getNewTableData, tryAddDataToTable } from '../../utils';
 import { RESPONSE_STATUS, TIMER_LOGIN } from '../../constants';
 
 const { Item } = Form;
@@ -16,10 +10,11 @@ const { Item } = Form;
 export const NewItemForm = (props: NewItemFormProps) => {
   const { reloadTable } = props;
 
-  const [isWrongLoginData, setIsWrongLoginData] = useState<boolean>(false);
+  const [isWrongNewTableItem, setIsWrongNewTableItem] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errMessagesArr, setErrMessagesArr] = useState<string[]>([]);
 
+  const [messageApi, contextHolder] = message.useMessage();
   const [formElem] = Form.useForm();
 
   const handleConfirm = async (values: NewTableItemFields): Promise<void> => {
@@ -31,28 +26,27 @@ export const NewItemForm = (props: NewItemFormProps) => {
     setIsLoading(false);
 
     if (response.status !== RESPONSE_STATUS.Created) {
-      if ((response as ErrorResponse).error) {
-        const err = (response as ErrorResponse).error;
-        setErrMessagesArr([(err as Error).message]);
-      } else {
-        const respBody: ErrMessagesObj = await (response as Response).json();
+      const newErrMessagesArr: string[] = await getErrMessage(response);
+      setErrMessagesArr(newErrMessagesArr);
 
-        const newErrMessagesArr: string[] = getErrMessagesArr(respBody);
-        setErrMessagesArr(newErrMessagesArr);
-      }
-
-      setIsWrongLoginData(true);
+      setIsWrongNewTableItem(true);
       setTimeout(() => {
-        setIsWrongLoginData(false);
+        setIsWrongNewTableItem(false);
       }, TIMER_LOGIN);
       return;
     }
 
+    messageApi.open({
+      type: 'success',
+      content: 'New table data is saved successful',
+    });
+    formElem.resetFields();
     reloadTable();
   };
 
   return (
     <Form form={formElem} onFinish={handleConfirm} style={{ maxWidth: 600 }}>
+      {contextHolder}
       <TextInput labelName="Name" isRequired={true}>
         <Input placeholder="Alex" allowClear />
       </TextInput>
@@ -69,11 +63,11 @@ export const NewItemForm = (props: NewItemFormProps) => {
         <Input placeholder="Ukraine, Kharkiv, Sumskaya str., 10" allowClear />
       </TextInput>
       <Item>
-        <Button type="primary" htmlType="submit" disabled={isWrongLoginData} loading={isLoading}>
+        <Button type="primary" htmlType="submit" disabled={isWrongNewTableItem} loading={isLoading}>
           Confirm
         </Button>
       </Item>
-      {isWrongLoginData &&
+      {isWrongNewTableItem &&
         !!errMessagesArr.length &&
         errMessagesArr.map((errMess) => {
           return (

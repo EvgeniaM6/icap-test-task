@@ -8,6 +8,8 @@ import {
   TableResponse,
   TableItemFields,
   TableItemsForm,
+  ErrValidateForm,
+  ErrFieldValidateForm,
 } from './response.model';
 import { NewItemFormProps, NewTableItemFields } from './tableForm.model';
 
@@ -23,4 +25,6 @@ export {
   TableItemFields,
   TableData,
   TableItemsForm,
+  ErrFieldValidateForm,
+  ErrValidateForm,
 };

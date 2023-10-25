@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   getArgsProps,
+  getErrMessagesArr,
   getNewTableData,
   tryChangeTableItem,
   tryDeleteTableItem,
@@ -13,6 +14,7 @@ import {
   NewTableData,
   TableData,
   TableItemsForm,
+  ErrValidateForm,
 } from '../../models';
 import { RESPONSE_STATUS } from '../../constants';
 import { Button, Form, Table, message } from 'antd';
@@ -29,11 +31,11 @@ export const TableElem = () => {
   const [isAddTableData, setIsAddTableData] = useState<boolean>(false);
   const [editingKey, setEditingKey] = useState('');
 
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<TableItemsForm>();
 
-  const isEditing = (record: TableItemFields) => record.key === editingKey;
+  const isEditing = (record: TableItemFields): boolean => record.key === editingKey;
 
-  const editField = (record: Partial<TableItemFields> & { key: React.Key }) => {
+  const editField = (record: Partial<TableItemFields> & { key: React.Key }): void => {
     const birthday: Dayjs = dayjs(record.birthday_date || '', 'DD-MM-YY');
     form.setFieldsValue({ ...record, birthday_date: birthday });
     setEditingKey(record.key);
@@ -75,11 +77,11 @@ export const TableElem = () => {
     }, 0);
   };
 
-  const handleAddData = () => {
+  const handleAddData = (): void => {
     setIsAddTableData((prevValue: boolean) => !prevValue);
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: number): Promise<void> => {
     const response: Response | ErrorResponse = await tryDeleteTableItem(id);
     const isSuccess: boolean = response.status === RESPONSE_STATUS.Deleted;
     const msgArgsProps: ArgsProps = await getArgsProps(response, isSuccess, 'deleted');
@@ -88,7 +90,7 @@ export const TableElem = () => {
     reloadTable();
   };
 
-  const handleCancel = () => {
+  const handleCancel = (): void => {
     setEditingKey('');
   };
 
@@ -112,8 +114,14 @@ export const TableElem = () => {
         handleCancel();
         reloadTable();
       }
-    } catch (error) {
-      console.log('error=', error);
+    } catch (error: unknown) {
+      if ((error as ErrValidateForm).errorFields) {
+        const errMsgsArr = getErrMessagesArr(error as ErrValidateForm);
+        messageApi.open({
+          type: 'error',
+          content: errMsgsArr,
+        });
+      }
     }
   };
 

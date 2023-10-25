@@ -1,4 +1,5 @@
 import { Dayjs } from 'dayjs';
+import { NewTableItemFields } from './tableForm.model';
 
 export type ErrorResponse = {
   status: number;
@@ -38,4 +39,16 @@ export type ErrMessagesObj = {
 
 export type ErrDeleteMessageObj = {
   detail: string;
+};
+
+export type ErrValidateForm = {
+  errorFields: ErrFieldValidateForm[];
+  outOfDate: boolean;
+  values: NewTableItemFields;
+};
+
+export type ErrFieldValidateForm = {
+  errors: string[];
+  name: string[];
+  warnings: string[];
 };
