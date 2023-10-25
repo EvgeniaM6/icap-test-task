@@ -204,8 +204,9 @@ export const TableElem = () => {
             },
           }}
           dataSource={data.results.map((tableItem: TableData) => {
+            const { birthday_date, phone_number } = tableItem;
             return {
-              key: tableItem.id.toString(),
+              key: tableItem.id?.toString() || `${birthday_date}${phone_number}`,
               ...tableItem,
             };
           })}

@@ -14,7 +14,7 @@ export type TableResponse = {
 };
 
 export interface TableData extends NewTableData {
-  id: number;
+  id?: number;
 }
 
 export type NewTableData = {
