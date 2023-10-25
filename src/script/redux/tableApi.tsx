@@ -15,6 +15,14 @@ export const tableApi = createApi({
         },
       }),
     }),
+    getTableItem: build.query<TableData, string>({
+      query: (id: string) => ({
+        url: `/${PARTIAL_URL.TABLE}/${id}`,
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+      }),
+    }),
     addDataToTable: build.mutation<TableData, NewTableData>({
       query: (values: NewTableData) => ({
         url: `/${PARTIAL_URL.TABLE}/`,
@@ -38,6 +46,16 @@ export const tableApi = createApi({
       query: ({ id, ...values }: TableData) => ({
         url: `/${PARTIAL_URL.TABLE}/${id}/`,
         method: REQUEST_METHODS.PUT,
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+        body: JSON.stringify(values),
+      }),
+    }),
+    partiallyChangeTableItem: build.mutation<TableData, TableData>({
+      query: ({ id, ...values }: TableData) => ({
+        url: `/${PARTIAL_URL.TABLE}/${id}/`,
+        method: REQUEST_METHODS.PATCH,
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
         },
