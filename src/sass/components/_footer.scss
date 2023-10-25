@@ -1,0 +1,23 @@
+.footer {
+  background-color: #fff;
+
+  &__year {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__gh-link {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    &-img {
+      width: 25px;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+}
