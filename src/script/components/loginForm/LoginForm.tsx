@@ -1,11 +1,11 @@
 import { Alert, Button, Form, Input } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
-import { LoginFormValues, ErrorResponse } from '../../models';
-import { tryLogin } from '../../utils';
-import { RESPONSE_STATUS, TIMER_LOGIN } from '../../constants';
+import { LoginFormValues } from '../../models';
+import { TIMER_LOGIN } from '../../constants';
 import { TextInput } from './TextInput';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { useLogInMutation } from '../../redux/loginApi';
 
 const { Item } = Form;
 
@@ -16,6 +16,7 @@ export const LoginForm = () => {
   const [formElem] = Form.useForm();
 
   const navigate: NavigateFunction = useNavigate();
+  const [logIn, { isSuccess, error, data, status, reset }] = useLogInMutation();
 
   const handleLogin = async (values: LoginFormValues): Promise<void> => {
     if (isWrongLoginData) {
@@ -23,11 +24,15 @@ export const LoginForm = () => {
     }
 
     setIsLoading(true);
+    await logIn(values);
+  };
 
-    const response: Response | ErrorResponse = await tryLogin(values);
+  useEffect(() => {
+    if (status === 'pending' || status === 'uninitialized') return;
+
     setIsLoading(false);
 
-    if (response.status !== RESPONSE_STATUS.Ok) {
+    if (!isSuccess) {
       setIsWrongLoginData(true);
       setTimeout(() => {
         setIsWrongLoginData(false);
@@ -36,7 +41,8 @@ export const LoginForm = () => {
     }
 
     navigate('/table');
-  };
+    reset();
+  }, [isSuccess, error, data, status]);
 
   //TODO: add timer for button Login
 
