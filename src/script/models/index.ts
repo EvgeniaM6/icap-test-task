@@ -1,3 +1,4 @@
+import { LoginState } from './login.model';
 import { LoginFormValues } from './loginForm.model';
 import {
   ErrDeleteMessageObj,
@@ -29,4 +30,5 @@ export {
   ErrFieldValidateForm,
   ErrValidateForm,
   TableState,
+  LoginState,
 };

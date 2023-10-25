@@ -17,6 +17,3 @@ export enum RESPONSE_STATUS {
   Deleted = 204,
   ServerError = 500,
 }
-
-// const username = 'testuser';
-// const password = 'testpassword123';
