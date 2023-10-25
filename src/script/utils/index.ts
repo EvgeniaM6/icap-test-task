@@ -1,16 +1,14 @@
-import { getArgsProps, getErrMessage, getErrMessagesArr } from './getErrMessagesArr';
-import { getNewTableData } from './getNewTableData';
 import {
-  tryAddDataToTable,
-  tryChangeTableItem,
-  tryDeleteTableItem,
-  tryGetTable,
-  tryLogin,
-} from './request';
+  getArgsProps,
+  getErrMessage,
+  getErrMessagesArr,
+  getErrMsgFromApi,
+} from './getErrMessagesArr';
+import { getNewTableData } from './getNewTableData';
+import { tryAddDataToTable, tryChangeTableItem, tryDeleteTableItem, tryLogin } from './request';
 
 export {
   tryLogin,
-  tryGetTable,
   tryAddDataToTable,
   getNewTableData,
   tryDeleteTableItem,
@@ -18,4 +16,5 @@ export {
   getErrMessagesArr,
   getErrMessage,
   getArgsProps,
+  getErrMsgFromApi,
 };

@@ -1,9 +1,10 @@
 import { Alert, Button, DatePicker, Form, Input, message } from 'antd';
 import { TextInput } from '../loginForm/TextInput';
-import { useState } from 'react';
-import { ErrorResponse, NewItemFormProps, NewTableData, NewTableItemFields } from '../../models';
-import { getErrMessage, getNewTableData, tryAddDataToTable } from '../../utils';
-import { RESPONSE_STATUS, TIMER_LOGIN } from '../../constants';
+import { useEffect, useState } from 'react';
+import { NewItemFormProps, NewTableData, NewTableItemFields } from '../../models';
+import { getErrMsgFromApi, getNewTableData } from '../../utils';
+import { TIMER_LOGIN } from '../../constants';
+import { useAddDataToTableMutation } from '../../redux/tableApi';
 
 const { Item } = Form;
 
@@ -14,6 +15,8 @@ export const NewItemForm = (props: NewItemFormProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errMessagesArr, setErrMessagesArr] = useState<string[]>([]);
 
+  const [addDataToTable, { isSuccess, error, data, status, reset }] = useAddDataToTableMutation();
+
   const [messageApi, contextHolder] = message.useMessage();
   const [formElem] = Form.useForm();
 
@@ -21,18 +24,23 @@ export const NewItemForm = (props: NewItemFormProps) => {
     const newTableData: NewTableData = getNewTableData(values);
 
     setIsLoading(true);
-    const response: Response | ErrorResponse = await tryAddDataToTable(newTableData);
+    await addDataToTable(newTableData);
+  };
+
+  useEffect(() => {
+    if (status === 'pending' || status === 'uninitialized') return;
 
     setIsLoading(false);
 
-    if (response.status !== RESPONSE_STATUS.Created) {
-      const newErrMessagesArr: string[] = await getErrMessage(response);
-      setErrMessagesArr(newErrMessagesArr);
+    if (!isSuccess && error) {
+      const errMsg: string[] = getErrMsgFromApi(error);
+      setErrMessagesArr(errMsg);
 
       setIsWrongNewTableItem(true);
       setTimeout(() => {
         setIsWrongNewTableItem(false);
       }, TIMER_LOGIN);
+
       return;
     }
 
@@ -40,9 +48,12 @@ export const NewItemForm = (props: NewItemFormProps) => {
       type: 'success',
       content: 'New table data is saved successful',
     });
+
     formElem.resetFields();
     reloadTable();
-  };
+
+    reset();
+  }, [isSuccess, error, data, status]);
 
   return (
     <Form form={formElem} onFinish={handleConfirm} style={{ maxWidth: 600 }}>

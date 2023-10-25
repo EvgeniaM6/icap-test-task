@@ -6,6 +6,8 @@ import {
   ErrValidateForm,
   ErrorResponse,
 } from '../models';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { SerializedError } from '@reduxjs/toolkit';
 
 export const getErrMessagesArr = (respBody: ErrMessagesObj | ErrValidateForm): string[] => {
   const errorsArray: string[][] | ErrFieldValidateForm[] =
@@ -55,4 +57,17 @@ export const getArgsProps = async (
     type: messageType,
     content: msgContent,
   };
+};
+
+export const getErrMsgFromApi = (error: FetchBaseQueryError | SerializedError): string[] => {
+  let errMsg = ['Opps! Something went wrong! Try again'];
+  if ('message' in error) {
+    errMsg = [error.message || ''];
+  } else if ('error' in error) {
+    errMsg = [error.error];
+  } else if ('data' in error) {
+    errMsg = getErrMessagesArr(error.data as ErrMessagesObj);
+  }
+
+  return errMsg;
 };

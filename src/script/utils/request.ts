@@ -18,41 +18,6 @@ export const tryLogin = async (values: LoginFormValues): Promise<Response | Erro
   }
 };
 
-export const tryGetTable = async (): Promise<Response | ErrorResponse> => {
-  try {
-    return await fetch(`${BASE_URL}/${PARTIAL_URL.TABLE}/`, {
-      method: REQUEST_METHODS.GET,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } catch (error: unknown) {
-    return {
-      status: RESPONSE_STATUS.ServerError,
-      error,
-    };
-  }
-};
-
-export const tryAddDataToTable = async (
-  values: NewTableData
-): Promise<Response | ErrorResponse> => {
-  try {
-    return await fetch(`${BASE_URL}/${PARTIAL_URL.TABLE}/`, {
-      method: REQUEST_METHODS.POST,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(values),
-    });
-  } catch (error: unknown) {
-    return {
-      status: RESPONSE_STATUS.ServerError,
-      error,
-    };
-  }
-};
-
 export const tryDeleteTableItem = async (id: number): Promise<Response | ErrorResponse> => {
   try {
     return await fetch(`${BASE_URL}/${PARTIAL_URL.TABLE}/${id}/`, {
