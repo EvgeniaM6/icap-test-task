@@ -7,24 +7,27 @@ import {
   TableItemsForm,
   ErrValidateForm,
 } from '../../models';
-import { Button, Form, Table, message } from 'antd';
+import { Button, Divider, Form, Table, message } from 'antd';
 import { getColumns } from './tableColumns';
 import { NewItemForm } from './NewItemForm';
 import { EditableCell } from './EditableCell';
 import dayjs, { Dayjs } from 'dayjs';
 import { ArgsProps } from 'antd/es/message';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { resetEditingKey, setEditingKey } from '../../store/tableSlice';
+import { resetEditingKey, setEditingKey, setNextPage, setPrevPage } from '../../store/tableSlice';
 import {
   useChangeTableItemMutation,
   useDeleteTableItemMutation,
   useGetTableDataQuery,
 } from '../../redux/tableApi';
+import { PageManager } from './PageManager';
 
 export const TableElem = () => {
   const [isAddTableData, setIsAddTableData] = useState<boolean>(false);
+  const [currUrl, setCurrUrl] = useState<string>('');
+  const [canChangePage, setCanChangePage] = useState<boolean>(true);
 
-  const { editingKey } = useAppSelector((state) => state.table);
+  const { editingKey, currPage } = useAppSelector((state) => state.table);
   const dispatch = useAppDispatch();
 
   const [
@@ -63,13 +66,19 @@ export const TableElem = () => {
   const {
     data = {
       count: 0,
+      next: null,
+      previous: null,
       results: [],
     },
     error,
     isError,
     isLoading,
     refetch,
-  } = useGetTableDataQuery('');
+  } = useGetTableDataQuery(currUrl);
+
+  useEffect(() => {
+    setCanChangePage(true);
+  }, [data]);
 
   useEffect(() => {
     if (!isError || !error) return;
@@ -159,13 +168,36 @@ export const TableElem = () => {
     resetChangeReq();
   }, [isSuccChange, changeRespErr, changeRespData, statChange]);
 
+  const handlePrevPage = () => {
+    if (!data.previous || !canChangePage) return;
+
+    setCanChangePage(false);
+    setCurrUrl(data.previous);
+    dispatch(setPrevPage());
+  };
+
+  const handleNextPage = () => {
+    if (!data.next || !canChangePage) return;
+
+    setCanChangePage(false);
+    setCurrUrl(data.next);
+    dispatch(setNextPage());
+  };
+
   const columns = getColumns(isEditing, handleDelete, handleCancel, handleSave, editField);
 
   return (
     <>
-      <div>pages: {Math.ceil(data.count / 10)}</div>
       <Button onClick={() => reloadTable()}>Reload</Button>
       {contextHolder}
+      <Divider />
+      <PageManager
+        canChangePage={canChangePage}
+        currPage={currPage}
+        data={data}
+        handlePrevPage={handlePrevPage}
+        handleNextPage={handleNextPage}
+      />
       <Form form={form}>
         <Table
           components={{
@@ -184,8 +216,16 @@ export const TableElem = () => {
           pagination={false}
         />
       </Form>
-      <Button onClick={handleAddData} type="primary">
-        Add data
+      <PageManager
+        canChangePage={canChangePage}
+        currPage={currPage}
+        data={data}
+        handlePrevPage={handlePrevPage}
+        handleNextPage={handleNextPage}
+      />
+      <Divider />
+      <Button onClick={handleAddData} type="primary" style={{ display: 'block' }}>
+        {isAddTableData ? '^ Hide' : 'V Add data to table'}
       </Button>
       {isAddTableData && <NewItemForm reloadTable={reloadTable} />}
     </>

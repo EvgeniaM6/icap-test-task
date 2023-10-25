@@ -9,7 +9,7 @@ export const tableApi = createApi({
   endpoints: (build) => ({
     getTableData: build.query<TableResponse, string>({
       query: (page: string) => ({
-        url: page ? `/${PARTIAL_URL.TABLE}/${page}` : `/${PARTIAL_URL.TABLE}/`,
+        url: `/${PARTIAL_URL.TABLE}/${page ? page.split('/').at(-1) : ''}`,
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
         },
