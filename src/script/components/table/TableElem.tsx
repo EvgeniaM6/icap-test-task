@@ -188,9 +188,7 @@ export const TableElem = () => {
 
   return (
     <>
-      <Button onClick={() => reloadTable()}>Reload</Button>
       {contextHolder}
-      <Divider />
       <PageManager
         canChangePage={canChangePage}
         currPage={currPage}

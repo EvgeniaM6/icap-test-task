@@ -6,6 +6,8 @@ import { TIMER_LOGIN } from '../../constants';
 import { TextInput } from './TextInput';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { useLogInMutation } from '../../redux/loginApi';
+import { useAppDispatch } from '../../hooks';
+import { setIsAuthorized } from '../../store/loginSlice';
 
 const { Item } = Form;
 
@@ -13,6 +15,8 @@ export const LoginForm = () => {
   const [isWrongLoginData, setIsWrongLoginData] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [timer, setTimer] = useState<number>(TIMER_LOGIN / 1000);
+
+  const dispatch = useAppDispatch();
 
   const [formElem] = Form.useForm();
 
@@ -47,6 +51,7 @@ export const LoginForm = () => {
       return;
     }
 
+    dispatch(setIsAuthorized(true));
     navigate('/table');
     reset();
   }, [isSuccess, error, data, status]);
