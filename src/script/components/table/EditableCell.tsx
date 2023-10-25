@@ -17,7 +17,8 @@ export const EditableCell: React.FC<EditableCellProps> = ({
   children,
   ...restProps
 }) => {
-  const inputNode = inputtype === 'date' ? <DatePicker /> : <Input />;
+  const inputNode: JSX.Element = inputtype === 'date' ? <DatePicker /> : <Input />;
+  const isRequired: boolean = dataIndex !== 'address';
 
   return (
     <td {...restProps}>
@@ -27,7 +28,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
           style={{ margin: 0 }}
           rules={[
             {
-              required: true,
+              required: isRequired,
               message: `Please Input ${title}!`,
             },
           ]}
