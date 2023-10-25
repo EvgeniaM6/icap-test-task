@@ -14,6 +14,7 @@ export const NewItemForm = (props: NewItemFormProps) => {
   const [isWrongNewTableItem, setIsWrongNewTableItem] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errMessagesArr, setErrMessagesArr] = useState<string[]>([]);
+  const [timer, setTimer] = useState<number>(TIMER_LOGIN / 1000);
 
   const [addDataToTable, { isSuccess, error, data, status, reset }] = useAddDataToTableMutation();
 
@@ -36,9 +37,15 @@ export const NewItemForm = (props: NewItemFormProps) => {
       const errMsg: string[] = getErrMsgFromApi(error);
       setErrMessagesArr(errMsg);
 
+      const intervalId = setInterval(() => {
+        runTimeout();
+      }, 1000);
+
       setIsWrongNewTableItem(true);
       setTimeout(() => {
         setIsWrongNewTableItem(false);
+        clearInterval(intervalId);
+        setTimer(TIMER_LOGIN / 1000);
       }, TIMER_LOGIN);
 
       return;
@@ -54,6 +61,15 @@ export const NewItemForm = (props: NewItemFormProps) => {
 
     reset();
   }, [isSuccess, error, data, status]);
+
+  const runTimeout = () => {
+    setTimer((prevTime) => {
+      if (prevTime > 0) {
+        return prevTime - 1;
+      }
+      return prevTime;
+    });
+  };
 
   return (
     <Form form={formElem} onFinish={handleConfirm} style={{ maxWidth: 600 }}>
@@ -77,6 +93,7 @@ export const NewItemForm = (props: NewItemFormProps) => {
         <Button type="primary" htmlType="submit" disabled={isWrongNewTableItem} loading={isLoading}>
           Confirm
         </Button>
+        {isWrongNewTableItem && !!errMessagesArr.length && <div>{timer}</div>}
       </Item>
       {isWrongNewTableItem &&
         !!errMessagesArr.length &&

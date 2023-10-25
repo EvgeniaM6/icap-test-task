@@ -58,7 +58,7 @@ export const LoginForm = () => {
 
   const runTimeout = () => {
     setTimer((prevTime) => {
-      if (timer > 0) {
+      if (prevTime > 0) {
         return prevTime - 1;
       }
       return prevTime;
