@@ -11,6 +11,7 @@ import {
   ErrValidateForm,
   ErrFieldValidateForm,
 } from './response.model';
+import { TableState } from './table.model';
 import { NewItemFormProps, NewTableItemFields } from './tableForm.model';
 
 export {
@@ -27,4 +28,5 @@ export {
   TableItemsForm,
   ErrFieldValidateForm,
   ErrValidateForm,
+  TableState,
 };

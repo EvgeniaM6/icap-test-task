@@ -5,11 +5,9 @@ import {
   getNewTableData,
   tryChangeTableItem,
   tryDeleteTableItem,
-  tryGetTable,
 } from '../../utils';
 import {
   ErrorResponse,
-  TableResponse,
   TableItemFields,
   NewTableData,
   TableData,
@@ -23,13 +21,15 @@ import { NewItemForm } from './NewItemForm';
 import { EditableCell } from './EditableCell';
 import dayjs, { Dayjs } from 'dayjs';
 import { ArgsProps } from 'antd/es/message';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { resetEditingKey, setEditingKey } from '../../store/tableSlice';
+import { useGetTableDataQuery } from '../../redux/goodsApi';
 
 export const TableElem = () => {
-  const [tableData, setTableData] = useState<TableData[]>([]);
-  const [tableItemsCount, setTableItemsCount] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAddTableData, setIsAddTableData] = useState<boolean>(false);
-  const [editingKey, setEditingKey] = useState('');
+
+  const { editingKey } = useAppSelector((state) => state.table);
+  const dispatch = useAppDispatch();
 
   const [form] = Form.useForm<TableItemsForm>();
 
@@ -38,43 +38,40 @@ export const TableElem = () => {
   const editField = (record: Partial<TableItemFields> & { key: React.Key }): void => {
     const birthday: Dayjs = dayjs(record.birthday_date || '', 'DD-MM-YY');
     form.setFieldsValue({ ...record, birthday_date: birthday });
-    setEditingKey(record.key);
+    dispatch(setEditingKey(record.key));
   };
 
   const [messageApi, contextHolder] = message.useMessage();
 
+  const {
+    data = {
+      count: 0,
+      results: [],
+    },
+    error,
+    isError,
+    isLoading,
+    refetch,
+  } = useGetTableDataQuery('');
+
   useEffect(() => {
-    if (!isLoading) {
-      return;
+    if (!isError || !error) return;
+
+    let errMsg = 'Opps! Something went wrong! Try again';
+    if ('message' in error) {
+      errMsg = error.message || '';
+    } else if ('error' in error) {
+      errMsg = error.error;
     }
 
-    tryGetTable()
-      .then((response: Response | ErrorResponse) => {
-        if (response.status !== RESPONSE_STATUS.Ok) {
-          throw new Error('Opps! something went wrong');
-        }
-
-        return (response as Response).json();
-      })
-      .then((data: TableResponse) => {
-        const { count, results } = data;
-
-        setTableItemsCount(count);
-        setTableData(results);
-
-        setIsLoading(false);
-      })
-      .catch(() => {
-        //TODO: popup with err
-        setIsLoading(false);
-      });
-  }, [isLoading]);
+    messageApi.open({
+      type: 'error',
+      content: errMsg,
+    });
+  }, [isError, error]);
 
   const reloadTable = (): void => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 0);
+    refetch();
   };
 
   const handleAddData = (): void => {
@@ -91,7 +88,7 @@ export const TableElem = () => {
   };
 
   const handleCancel = (): void => {
-    setEditingKey('');
+    dispatch(resetEditingKey());
   };
 
   const handleSave = async (id: number): Promise<void> => {
@@ -129,8 +126,8 @@ export const TableElem = () => {
 
   return (
     <>
-      <div>{tableItemsCount}</div>
-      <div>TableElem</div>
+      <div>pages: {Math.ceil(data.count / 10)}</div>
+      <Button onClick={() => reloadTable()}>Reload</Button>
       {contextHolder}
       <Form form={form}>
         <Table
@@ -139,7 +136,7 @@ export const TableElem = () => {
               cell: EditableCell,
             },
           }}
-          dataSource={tableData.map((tableItem: TableData) => {
+          dataSource={data.results.map((tableItem: TableData) => {
             return {
               key: tableItem.id.toString(),
               ...tableItem,
